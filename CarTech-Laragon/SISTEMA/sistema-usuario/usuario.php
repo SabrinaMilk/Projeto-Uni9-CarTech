@@ -1,4 +1,5 @@
 <?php
+// SISTEMA/sistema-usuario/usuario.php
 
 // Configurar timezone para Brasília
 date_default_timezone_set('America/Sao_Paulo');
@@ -7,7 +8,7 @@ session_start();
 
 // Verificar se está logado como empresa
 if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'empresa' || $_SESSION['usuario']['logado'] !== true) {
-    header('Location: ../../LOGIN/login.php');
+    header('Location: ../../MARKETING/LOGIN/login.php');
     exit;
 }
 
@@ -30,7 +31,7 @@ try {
     if (!$empresa) {
         // Se não encontrou a empresa, faz logout
         session_destroy();
-        header('Location: ../../LOGIN/login.php');
+        header('Location: ../../MARKETING/LOGIN/login.php');
         exit;
     }
     
@@ -38,7 +39,6 @@ try {
     die("Erro na conexão com o banco de dados");
 }
 
-session_start(); // DEVE SER REFEITO EM SQL PARA SAIR DA SIMULAÇÃO, TIRAR DEPOIS
 // Simulação de dados - na prática você conectaria com banco de dados
 $ordens_servico = isset($_SESSION['ordens_servico']) ? $_SESSION['ordens_servico'] : [];
 $agendamentos = isset($_SESSION['agendamentos']) ? $_SESSION['agendamentos'] : [];
@@ -52,12 +52,6 @@ $agendamentos = isset($_SESSION['agendamentos']) ? $_SESSION['agendamentos'] : [
     <title>CarTech - Sistema de Gestão Mecânica</title>
     <link rel="stylesheet" href="user.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-        <h1>Painel da Empresa</h1>
-        <div class="user-info">
-            Bem-vindo, <?php echo htmlspecialchars($empresa['nome_empresa']); ?>
-            <a href="logout.php">Sair</a>
-        </div>
-
 </head>
 
 <body>
@@ -78,143 +72,143 @@ $agendamentos = isset($_SESSION['agendamentos']) ? $_SESSION['agendamentos'] : [
             <h2><i class="fas fa-clipboard-list"></i> Nova Ordem de Serviço</h2>
             
             <form id="osForm">
-    <div class="form-tabs">
-        <div class="tab-buttons">
-            <button type="button" class="tab-btn active" data-tab="dados-veiculo">Dados do Veículo</button>
-            <button type="button" class="tab-btn" data-tab="dados-cliente">Dados do Cliente</button>
-            <button type="button" class="tab-btn" data-tab="dados-servico">Serviço</button>
-        </div>
+                <div class="form-tabs">
+                    <div class="tab-buttons">
+                        <button type="button" class="tab-btn active" data-tab="dados-veiculo">Dados do Veículo</button>
+                        <button type="button" class="tab-btn" data-tab="dados-cliente">Dados do Cliente</button>
+                        <button type="button" class="tab-btn" data-tab="dados-servico">Serviço</button>
+                    </div>
 
-        <div class="tab-content active" id="dados-veiculo">
-            <div class="form-grid">
-                <div class="input-group">
-                    <label for="placa">Placa do Veículo *</label>
-                    <input type="text" id="placa" name="placa" required class="uppercase" maxlength="7" placeholder="ABC1D23" autocomplete="off" pattern="[A-Za-z]{3}[0-9A-Za-z][0-9A-Za-z]{2}">
-                </div>
-                
-                <div class="input-row">
-                    <div class="input-group">
-                        <label for="marca">Marca *</label>
-                        <input type="text" id="marca" name="marca" required placeholder="Ex: Volkswagen" autocomplete="off">
+                    <div class="tab-content active" id="dados-veiculo">
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label for="placa">Placa do Veículo *</label>
+                                <input type="text" id="placa" name="placa" required class="uppercase" maxlength="7" placeholder="ABC1D23" autocomplete="off" pattern="[A-Za-z]{3}[0-9A-Za-z][0-9A-Za-z]{2}">
+                            </div>
+                            
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <label for="marca">Marca *</label>
+                                    <input type="text" id="marca" name="marca" required placeholder="Ex: Volkswagen" autocomplete="off">
+                                </div>
+                                <div class="input-group">
+                                    <label for="modelo">Modelo *</label>
+                                    <input type="text" id="modelo" name="modelo" required placeholder="Ex: Gol" autocomplete="off">
+                                </div>
+                            </div>
+                            
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <label for="ano">Ano *</label>
+                                    <input type="number" id="ano" name="ano" required min="1950" max="2024" placeholder="2023" autocomplete="off">
+                                </div>
+                                <div class="input-group">
+                                    <label for="cor">Cor</label>
+                                    <input type="text" id="cor" name="cor" placeholder="Ex: Prata" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label for="modelo">Modelo *</label>
-                        <input type="text" id="modelo" name="modelo" required placeholder="Ex: Gol" autocomplete="off">
-                    </div>
-                </div>
-                
-                <div class="input-row">
-                    <div class="input-group">
-                        <label for="ano">Ano *</label>
-                        <input type="number" id="ano" name="ano" required min="1950" max="2024" placeholder="2023" autocomplete="off">
-                    </div>
-                    <div class="input-group">
-                        <label for="cor">Cor</label>
-                        <input type="text" id="cor" name="cor" placeholder="Ex: Prata" autocomplete="off">
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="tab-content" id="dados-cliente">
-            <div class="form-grid">
-                <div class="input-group">
-                    <label for="nome_cliente">Nome Completo *</label>
-                    <input type="text" id="nome_cliente" name="nome_cliente" required placeholder="Nome do cliente" autocomplete="off">
-                </div>
-                
-                <div class="input-row">
-                    <div class="input-group">
-                        <label for="cpf_cliente">CPF *</label>
-                        <input type="text" id="cpf_cliente" name="cpf_cliente" required class="cpf-mask" placeholder="000.000.000-00" autocomplete="off" maxlength="14">
+                    <div class="tab-content" id="dados-cliente">
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label for="nome_cliente">Nome Completo *</label>
+                                <input type="text" id="nome_cliente" name="nome_cliente" required placeholder="Nome do cliente" autocomplete="off">
+                            </div>
+                            
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <label for="cpf_cliente">CPF *</label>
+                                    <input type="text" id="cpf_cliente" name="cpf_cliente" required class="cpf-mask" placeholder="000.000.000-00" autocomplete="off" maxlength="14">
+                                </div>
+                                <div class="input-group">
+                                    <label for="telefone_cliente">Telefone *</label>
+                                    <input type="tel" id="telefone_cliente" name="telefone_cliente" required placeholder="(11) 99999-9999" autocomplete="off" maxlength="15">
+                                </div>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label for="email_cliente">Email</label>
+                                <input type="email" id="email_cliente" name="email_cliente" placeholder="cliente@email.com" autocomplete="off">
+                            </div>
+                            
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <label for="cep">CEP</label>
+                                    <input type="text" id="cep" name="cep" class="cep-mask" placeholder="00000-000" autocomplete="off" maxlength="9">
+                                </div>
+                                <div class="input-group">
+                                    <label for="numero_endereco">Número</label>
+                                    <input type="text" id="numero_endereco" name="numero_endereco" placeholder="123" autocomplete="off" maxlength="9">
+                                </div>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label for="rua">Rua</label>
+                                <input type="text" id="rua" name="rua" placeholder="Rua das Flores" autocomplete="off">
+                            </div>
+                            
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <label for="bairro">Bairro</label>
+                                    <input type="text" id="bairro" name="bairro" placeholder="Centro" autocomplete="off">
+                                </div>
+                                <div class="input-group">
+                                    <label for="cidade">Cidade</label>
+                                    <input type="text" id="cidade" name="cidade" placeholder="São Paulo" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label for="telefone_cliente">Telefone *</label>
-                        <input type="tel" id="telefone_cliente" name="telefone_cliente" required placeholder="(11) 99999-9999" autocomplete="off" maxlength="15">
-                    </div>
-                </div>
-                
-                <div class="input-group">
-                    <label for="email_cliente">Email</label>
-                    <input type="email" id="email_cliente" name="email_cliente" placeholder="cliente@email.com" autocomplete="off">
-                </div>
-                
-                <div class="input-row">
-                    <div class="input-group">
-                        <label for="cep">CEP</label>
-                        <input type="text" id="cep" name="cep" class="cep-mask" placeholder="00000-000" autocomplete="off" maxlength="9">
-                    </div>
-                    <div class="input-group">
-                        <label for="numero_endereco">Número</label>
-                        <input type="text" id="numero_endereco" name="numero_endereco" placeholder="123" autocomplete="off" maxlength="9">
-                    </div>
-                </div>
-                
-                <div class="input-group">
-                    <label for="rua">Rua</label>
-                    <input type="text" id="rua" name="rua" placeholder="Rua das Flores" autocomplete="off">
-                </div>
-                
-                <div class="input-row">
-                    <div class="input-group">
-                        <label for="bairro">Bairro</label>
-                        <input type="text" id="bairro" name="bairro" placeholder="Centro" autocomplete="off">
-                    </div>
-                    <div class="input-group">
-                        <label for="cidade">Cidade</label>
-                        <input type="text" id="cidade" name="cidade" placeholder="São Paulo" autocomplete="off">
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="tab-content" id="dados-servico">
-            <div class="form-grid">
-                <div class="input-group">
-                    <label for="relato_cliente">Relato do Cliente *</label>
-                    <textarea id="relato_cliente" name="relato_cliente" required rows="4" placeholder="Descreva o problema relatado pelo cliente..." autocomplete="off"></textarea>
-                </div>
-                
-                <div class="input-row">
-                    <div class="input-group">
-                        <label for="status">Status *</label>
-                        <select id="status" name="status" required autocomplete="off">
-                            <option value="">Selecione o status</option>
-                            <option value="checkup">Checkup</option>
-                            <option value="diagnostico">Diagnóstico</option>
-                            <option value="preparando_orcamento">Preparando Orçamento</option>
-                            <option value="aguardando_aval">Aguardando Aval Cliente</option>
-                            <option value="orcamento_recusado">Orçamento Recusado</option>
-                            <option value="em_manutencao">Em Manutenção</option>
-                            <option value="aguardando_peca">Aguardando Peça</option>
-                            <option value="em_teste">Em Teste</option>
-                            <option value="reanalise">Reanálise</option>
-                            <option value="pronto_retirada">Pronto para Retirada</option>
-                            <option value="encerrado">Encerrado</option>
-                        </select>
+                    <div class="tab-content" id="dados-servico">
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label for="relato_cliente">Relato do Cliente *</label>
+                                <textarea id="relato_cliente" name="relato_cliente" required rows="4" placeholder="Descreva o problema relatado pelo cliente..." autocomplete="off"></textarea>
+                            </div>
+                            
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <label for="status">Status *</label>
+                                    <select id="status" name="status" required autocomplete="off">
+                                        <option value="">Selecione o status</option>
+                                        <option value="checkup">Checkup</option>
+                                        <option value="diagnostico">Diagnóstico</option>
+                                        <option value="preparando_orcamento">Preparando Orçamento</option>
+                                        <option value="aguardando_aval">Aguardando Aval Cliente</option>
+                                        <option value="orcamento_recusado">Orçamento Recusado</option>
+                                        <option value="em_manutencao">Em Manutenção</option>
+                                        <option value="aguardando_peca">Aguardando Peça</option>
+                                        <option value="em_teste">Em Teste</option>
+                                        <option value="reanalise">Reanálise</option>
+                                        <option value="pronto_retirada">Pronto para Retirada</option>
+                                        <option value="encerrado">Encerrado</option>
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <label for="previsao_reparo">Previsão para Reparo</label>
+                                    <select id="previsao_reparo" name="previsao_reparo" autocomplete="off">
+                                        <option value="indefinida">Indefinida</option>
+                                        <option value="1_dia">1 dia</option>
+                                        <option value="2_dias">2 dias</option>
+                                        <option value="3_dias">3 dias</option>
+                                        <option value="5_dias">5 dias</option>
+                                        <option value="7_dias">7 dias</option>
+                                        <option value="15_dias">15 dias</option>
+                                        <option value="data_especifica">Data Específica</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="input-group" id="data_especifica_container" style="display: none;">
+                                <label for="data_especifica">Data Específica</label>
+                                <input type="date" id="data_especifica" name="data_especifica" autocomplete="off">
+                            </div>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label for="previsao_reparo">Previsão para Reparo</label>
-                        <select id="previsao_reparo" name="previsao_reparo" autocomplete="off">
-                            <option value="indefinida">Indefinida</option>
-                            <option value="1_dia">1 dia</option>
-                            <option value="2_dias">2 dias</option>
-                            <option value="3_dias">3 dias</option>
-                            <option value="5_dias">5 dias</option>
-                            <option value="7_dias">7 dias</option>
-                            <option value="15_dias">15 dias</option>
-                            <option value="data_especifica">Data Específica</option>
-                        </select>
-                    </div>
                 </div>
-                
-                <div class="input-group" id="data_especifica_container" style="display: none;">
-                    <label for="data_especifica">Data Específica</label>
-                    <input type="date" id="data_especifica" name="data_especifica" autocomplete="off">
-                </div>
-            </div>
-        </div>
-    </div>
 
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="fecharModalOS()">
@@ -235,7 +229,7 @@ $agendamentos = isset($_SESSION['agendamentos']) ? $_SESSION['agendamentos'] : [
                 <h2>CarTech</h2>
             </div>
             <div id="profile-info">
-                <span id="user-name">Usuário</span>
+                <span id="user-name"><?php echo htmlspecialchars($empresa['nome_empresa']); ?></span>
             </div>
             <ul>
                 <li data-section="dashboard" data-tooltip="Dashboard">
@@ -256,13 +250,13 @@ $agendamentos = isset($_SESSION['agendamentos']) ? $_SESSION['agendamentos'] : [
                 </li>
             </ul>
             <ul style="margin-top: auto;">
-    <li>
-        <a href="../../LOGIN/login.php" class="nav-item logout" data-section="sair" data-tooltip="Sair">
-            <i class="fas fa-sign-out-alt"></i>
-            <span class="nav-text">Sair</span>
-        </a>
-    </li>
-</ul>
+                <li>
+                    <a href="../../MARKETING/LOGIN/login_empresa.php" class="nav-item logout" data-section="sair" data-tooltip="Sair">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="nav-text">Sair</span>
+                    </a>
+                </li>
+            </ul>
         </nav>
         
         <main class="content">
@@ -533,7 +527,7 @@ $agendamentos = isset($_SESSION['agendamentos']) ? $_SESSION['agendamentos'] : [
                     <h2>Sair do Sistema</h2>
                     <p>Tem certeza que deseja sair?</p>
                     <div class="logout-actions">
-                        <a href="logout.php" class="btn-primary">Confirmar Saída</a>
+                        <a href="../../MARKETING/LOGIN/login_empresa.php" class="btn-primary">Confirmar Saída</a>
                         <button onclick="showSection('dashboard')" class="btn-secondary">Cancelar</button>
                     </div>
                 </div>

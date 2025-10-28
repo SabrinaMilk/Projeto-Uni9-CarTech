@@ -59,6 +59,7 @@ try {
 }
 
 /// Processar criação de usuário
+// Processar criação de usuário
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['criar_usuario'])) {
         $dados = $_POST;
@@ -70,8 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare("INSERT INTO usuarios_empresa 
                 (nome_empresa, nome_proprietario, tipo_documento, documento, 
                  cep, rua, numero, bairro, cidade, estado, complemento,
-                 telefone, email, senha, data_cadastro, status, quantidade_usuarios, observacoes) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), 'ativo', ?, ?)");
+                 telefone, email, senha, senha_temporaria, primeiro_acesso, data_cadastro, status, quantidade_usuarios, observacoes) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE, NOW(), 'ativo', ?, ?)");
             
             $stmt->execute([
                 $dados['nome_empresa'],
@@ -88,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $dados['telefone'],
                 $dados['email'],
                 password_hash($senha_aleatoria, PASSWORD_DEFAULT),
+                $senha_aleatoria, // Armazena a senha temporária em texto claro para o WhatsApp
                 $dados['quantidade_usuarios'],
                 $dados['observacoes'] ?? ''
             ]);
@@ -103,7 +105,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['sucesso'] = "Usuário criado com sucesso! Senha: " . $senha_aleatoria . 
                                   " | <a href='" . $url_whatsapp . "' target='_blank' style='color: #10b981; text-decoration: underline;'>📱 Enviar credenciais via WhatsApp</a>";
             
-            // MANTER NA MESMA ABA
             header('Location: admin_dashboard.php?tab=criar-usuario');
             exit;
             
@@ -113,6 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
     }
+
     
     // Processar atualização de status
     if (isset($_POST['alterar_status'])) {
@@ -182,30 +184,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $dados = $_POST;
         
         try {
-            $stmt = $pdo->prepare("UPDATE usuarios_empresa SET 
-                nome_empresa = ?, nome_proprietario = ?, tipo_documento = ?, documento = ?,
-                cep = ?, rua = ?, numero = ?, bairro = ?, cidade = ?, estado = ?, complemento = ?,
-                telefone = ?, email = ?, quantidade_usuarios = ?, observacoes = ?
-                WHERE id = ?");
-            
-            $stmt->execute([
-                $dados['nome_empresa'],
-                $dados['nome_proprietario'],
-                $dados['tipo_documento'],
-                $dados['documento'],
-                $dados['cep'],
-                $dados['rua'],
-                $dados['numero'],
-                $dados['bairro'],
-                $dados['cidade'],
-                $dados['estado'],
-                $dados['complemento'],
-                $dados['telefone'],
-                $dados['email'],
-                $dados['quantidade_usuarios'],
-                $dados['observacoes'] ?? '',
-                $usuario_id
-            ]);
+            // No trecho do INSERT, atualize para:
+$stmt = $pdo->prepare("INSERT INTO usuarios_empresa 
+    (nome_empresa, nome_proprietario, tipo_documento, documento, 
+     cep, rua, numero, bairro, cidade, estado, complemento,
+     telefone, email, senha, senha_temporaria, primeiro_acesso, data_cadastro, status, quantidade_usuarios, observacoes) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE, NOW(), 'ativo', ?, ?)");
+
+$stmt->execute([
+    $dados['nome_empresa'],
+    $dados['nome_proprietario'],
+    $dados['tipo_documento'],
+    $dados['documento'],
+    $dados['cep'],
+    $dados['rua'],
+    $dados['numero'],
+    $dados['bairro'],
+    $dados['cidade'],
+    $dados['estado'],
+    $dados['complemento'],
+    $dados['telefone'],
+    $dados['email'],
+    password_hash($senha_aleatoria, PASSWORD_DEFAULT),
+    $senha_aleatoria, // Armazena a senha temporária em texto claro para o WhatsApp
+    $dados['quantidade_usuarios'],
+    $dados['observacoes'] ?? ''
+]);
             
             $_SESSION['sucesso'] = "Usuário atualizado com sucesso!";
             // MANTER NA LISTA DE USUÁRIOS
@@ -260,7 +264,7 @@ function enviarMensagemWhatsApp($telefone, $nome_empresa, $email, $senha) {
         $telefone_limpo = '55' . $telefone_limpo;
     }
     
-    // Mensagem personalizada
+    // Mensagem personalizada atualizada
     $mensagem = rawurlencode("🚗 *Bem-vindo ao Sistema CarTech!* 🚗
 
 🎉 *Parabéns, sua empresa foi cadastrada com sucesso!*
@@ -268,14 +272,14 @@ function enviarMensagemWhatsApp($telefone, $nome_empresa, $email, $senha) {
 📋 *Seus dados de acesso:*
 🏢 *Empresa:* $nome_empresa
 📧 *E-mail:* $email
-🔑 *Senha:* $senha
+🔑 *Senha Temporária:* $senha
 
 🌐 *Acesse nosso sistema:*
 http://cartech-laragon.test/LOGIN/login.php
 
 ⚠️ *Importante:*
 - Esta é uma senha temporária
-- Recomendamos alterar a senha no primeiro acesso
+- *Você deverá alterar a senha no primeiro acesso*
 - Mantenha seus dados confidenciais
 
 📞 *Dúvidas?* Entre em contato conosco.
@@ -318,7 +322,7 @@ http://cartech-laragon.test/LOGIN/login.php
         <i class="fas fa-users"></i>
         <span>Lista de Usuários</span>
     </a>
-    <a href="../../LOGIN/login.php" class="nav-item logout">
+    <a href="../../MARKETING/LOGIN/login_admin.php" class="nav-item logout">
         <i class="fas fa-sign-out-alt"></i>
         <span>Sair</span>
     </a>

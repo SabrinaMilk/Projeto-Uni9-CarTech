@@ -18,3 +18,18 @@ CREATE TABLE usuarios_empresa (
     status ENUM('ativo', 'inativo') DEFAULT 'ativo',
     data_cadastro DATETIME NOT NULL
 );
+
+ALTER TABLE usuarios_empresa 
+DROP COLUMN IF EXISTS senha_temporaria, 
+DROP COLUMN IF EXISTS primeiro_acesso;
+
+ALTER TABLE usuarios_empresa 
+ADD COLUMN senha_temporaria VARCHAR(255) DEFAULT '' AFTER senha,
+ADD COLUMN primeiro_acesso BOOLEAN DEFAULT TRUE AFTER senha_temporaria;
+
+-- Verificar estrutura atual da tabela
+DESCRIBE usuarios_empresa;
+
+-- Adicionar colunas uma por uma (se a anterior falhar)
+ALTER TABLE usuarios_empresa ADD COLUMN token_recuperacao VARCHAR(100) DEFAULT NULL;
+ALTER TABLE usuarios_empresa ADD COLUMN token_expiracao DATETIME DEFAULT NULL;

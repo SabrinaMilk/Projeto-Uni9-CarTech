@@ -538,16 +538,9 @@ function abrirModalWhatsApp(userId) {
 
 // Enviar WhatsApp
 function enviarWhatsApp(telefone, nomeEmpresa, email, senha) {
-    // Limpa o telefone (remove caracteres não numéricos)
-    const telefoneLimpo = telefone.replace(/\D/g, '');
+    // ... código anterior ...
     
-    // Formata o telefone (assume Brasil como padrão)
-    let telefoneFormatado = telefoneLimpo;
-    if (telefoneLimpo.length === 8 || telefoneLimpo.length === 9) {
-        telefoneFormatado = '55' + telefoneLimpo;
-    }
-    
-    // Mensagem personalizada
+    // Mensagem personalizada atualizada
     const mensagem = `🚗 *Bem-vindo ao Sistema CarTech!* 🚗
 
 🎉 *Parabéns, sua empresa foi cadastrada com sucesso!*
@@ -555,14 +548,14 @@ function enviarWhatsApp(telefone, nomeEmpresa, email, senha) {
 📋 *Seus dados de acesso:*
 🏢 *Empresa:* ${nomeEmpresa}
 📧 *E-mail:* ${email}
-🔑 *Senha:* ${senha}
+🔑 *Senha Temporária:* ${senha}
 
 🌐 *Acesse nosso sistema:*
 http://cartech-laragon.test/LOGIN/login.php
 
 ⚠️ *Importante:*
 - Esta é uma senha temporária
-- Recomendamos alterar a senha no primeiro acesso
+- *Você deverá alterar a senha no primeiro acesso*
 - Mantenha seus dados confidenciais
 
 📞 *Dúvidas?* Entre em contato conosco.
