@@ -1,5 +1,16 @@
 # Projeto-Uni9-CarTech
-Observações para correção:
+
+ALTERAÇÕES REALIZADAS ATÉ 28/10:  
+
+- Inclusão de alteração da senha temporária por primeiro acesso;
+- Inclusão de envio de senha temporária via whatsapp;
+- Inclusão de "esqueci a senha";
+- Alteração das telas login e divisão do login ADM do login de empresa;
+- Inclusão do logo;
+- Inclusões adicionais na tela de marketing;
+
+----------------------------------------------------------
+Observações para correção 11/10:
 
 Sistema ADM finalizado, favor validar visual, incrementar pequenos ajustes
 - Incluir visualização da senha em detalhes do ADM, além do preenchimento automático no disparo para whatsapp;
