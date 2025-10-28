@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  /* Adiciona um gradiente sutil ao fundo para um visual mais dinâmico */
+  background: linear-gradient(135deg, #111827 0%, #030712 100%);
+}
+
+/* Estilo para a mensagem de erro */
+#error-message {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.3s ease-out, max-height 0.3s ease-out;
+}
+
+/* Classe para mostrar a mensagem de erro com animação */
+#error-message.show {
+  opacity: 1;
+  max-height: 100px; /* Altura suficiente para a mensagem */
+}
